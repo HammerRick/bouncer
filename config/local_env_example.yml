@@ -1,0 +1,9 @@
+# make a copy of this file here with the name local_env.yml
+# eg. $ cp config/local_env_example.yml config/local_env.yml
+# This file must be kept listed in .gitignore to keep your settings secret!
+# Each entry gets set as a local environment variable.
+# This file overrides ENV variables in the Unix shell.
+# For example, setting:
+# API_KEY: 'Your_api_key'
+# makes 'Your_api_key' available as ENV["API_KEY"]
+API_KEY: api_key_goes_here
