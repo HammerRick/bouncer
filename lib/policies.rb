@@ -11,7 +11,24 @@ module Policies
   end
 
   def commitment_policy
-    self.refused_policy = 'commitment' if monthly_installment > income * commitment
+    possible_terms = terms
+
+    while possible_terms <= 12
+      self.monthly_installment = monthly_installment_calculator(possible_terms)
+      if monthly_installment < income * (1 - commitment)
+        self.approved_terms = possible_terms
+        break
+      end
+
+      possible_terms += 3
+    end
+    self.refused_policy = 'commitment' unless approved_terms
+  end
+
+  def age
+    today = Date.today
+    birthday_has_passed = today.month > birthdate.month || (today.month == birthdate.month && today.day >= birthdate.day)
+    today.year - birthdate.year - (birthday_has_passed ? 0 : 1)
   end
 
   def score
@@ -42,5 +59,27 @@ module Policies
     return nil if response.code != 200
 
     JSON.parse(response.body)['commitment']
+  end
+
+  def interest_rate_ranges
+    case score
+    when 900..1000
+      { 6 => 3.9, 9 => 4.2, 12 => 4.5 }
+    when 800..899
+      { 6 => 4.7, 9 => 5.0, 12 => 5.3 }
+    when 700..799
+      { 6 => 5.5, 9 => 5.8, 12 => 6.1 }
+    when 600..699
+      { 6 => 6.4, 9 => 6.6, 12 => 6.9 }
+    end
+  end
+
+  def monthly_installment_calculator(terms_count)
+    return nil unless interest_rate_ranges
+
+    i = interest_rate_ranges[terms_count] / 100
+    full_rate = (1 + i)**terms_count
+    installment = amount * (full_rate * i) / (full_rate - 1)
+    installment.round(2)
   end
 end
