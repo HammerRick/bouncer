@@ -1,4 +1,6 @@
 class Loan < ApplicationRecord
+  include Policies
+
   validates :name, presence: true
   validates_length_of :cpf, is: 11
   validates :birthdate, presence: { message: "invalid, please follow this pattern: 'yyyy-mm-dd'" }
@@ -10,5 +12,11 @@ class Loan < ApplicationRecord
 
   before_validation do
     self.cpf = cpf.gsub(/\D/, '') unless cpf.nil?
+  end
+
+  def age
+    today = Date.today
+    birthday_has_passed = today.month > birthdate.month || (today.month == birthdate.month && today.day >= birthdate.day)
+    today.year - birthdate.year - (birthday_has_passed ? 0 : 1)
   end
 end
