@@ -6,4 +6,6 @@
 # For example, setting:
 # API_KEY: 'Your_api_key'
 # makes 'Your_api_key' available as ENV["API_KEY"]
+API_URL: https://challenge.noverde.name
 API_KEY: api_key_goes_here
+REDIS_URL: redis://localhost:6379/0
