@@ -2,9 +2,7 @@ class CreditEngineJob < ApplicationJob
   queue_as :default
 
   def perform(loan)
-    sleep 10
-
-    loan.result = loan.age_policy ? 'approved' : 'refused'
+    loan.run_policies
     loan.save
   end
 end
