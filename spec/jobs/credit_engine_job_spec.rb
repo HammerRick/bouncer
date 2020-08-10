@@ -1,5 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe CreditEngineJob, type: :job do
-  pending "add some examples to (or delete) #{__FILE__}"
+  let(:loan) { create :loan }
+
+  it 'updates loan' do
+    expect(loan.status).to be_nil
+    CreditEngineJob.perform_now(loan)
+    expect(loan.status).to eq('completed')
+  end
 end

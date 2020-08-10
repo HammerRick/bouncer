@@ -47,32 +47,57 @@ RSpec.describe Policies do
   end
 
   describe 'Commitment policy' do
-    it "doesn't update refused_policy on valid commitment" do
-      allow(dummy_class).to receive(:score).and_return(600)
-      allow(dummy_class).to receive(:commitment).and_return(0.8)
+    context 'valid policy' do
+      it "doesn't update refused_policy on valid commitment" do
+        allow(dummy_class).to receive(:score).and_return(600)
+        allow(dummy_class).to receive(:commitment).and_return(0.8)
 
-      # with this income we have 300,00 available
-      dummy_class.income = 1500.to_d
-      dummy_class.amount = 2395.50.to_d
-      dummy_class.terms = 6
-      dummy_class.commitment_policy
-      expect(dummy_class.refused_policy).to be_nil
-      expect(dummy_class.approved_terms).to eq(12)
-      expect(dummy_class.monthly_installment).to eq(299.99.to_d)
-    end
+        expect(dummy_class.refused_policy).to be_nil
+        # with this income we have 300,00 available
+        dummy_class.income = 1500.to_d
+        dummy_class.amount = 2395.50.to_d
+        dummy_class.terms = 6
+        dummy_class.commitment_policy
+        expect(dummy_class.refused_policy).to be_nil
+      end
 
-    it "update refused_policy to 'commitment' on invalid commitment" do\
-      allow(dummy_class).to receive(:score).and_return(600)
-      allow(dummy_class).to receive(:commitment).and_return(0.8)
+      it 'gives right number of approved_terms' do
+        allow(dummy_class).to receive(:score).and_return(600)
+        allow(dummy_class).to receive(:commitment).and_return(0.8)
 
-      # with this income we have 300,00 available
-      dummy_class.income = 1500.to_d
-      dummy_class.amount = 2500.to_d
-      dummy_class.terms = 6
-      dummy_class.commitment_policy
-      expect(dummy_class.refused_policy).to eq('commitment')
-      expect(dummy_class.approved_terms).to eq(nil)
-      expect(dummy_class.monthly_installment).to eq(313.08.to_d)
+        # with this income we have 300,00 available
+        dummy_class.income = 1500.to_d
+        dummy_class.amount = 2395.50.to_d
+        dummy_class.terms = 6
+        dummy_class.commitment_policy
+        expect(dummy_class.approved_terms).to eq(12)
+      end
+
+      it 'gives the right amount for monthly_installment' do
+        allow(dummy_class).to receive(:score).and_return(600)
+        allow(dummy_class).to receive(:commitment).and_return(0.8)
+
+        # with this income we have 300,00 available
+        dummy_class.income = 1500.to_d
+        dummy_class.amount = 2395.50.to_d
+        dummy_class.terms = 6
+        dummy_class.commitment_policy
+        expect(dummy_class.monthly_installment).to eq(299.99.to_d)
+      end
+
+      it "update refused_policy to 'commitment' on invalid commitment" do\
+        allow(dummy_class).to receive(:score).and_return(600)
+        allow(dummy_class).to receive(:commitment).and_return(0.8)
+
+        # with this income we have 300,00 available
+        dummy_class.income = 1500.to_d
+        dummy_class.amount = 2500.to_d
+        dummy_class.terms = 6
+        dummy_class.commitment_policy
+        expect(dummy_class.refused_policy).to eq('commitment')
+        expect(dummy_class.approved_terms).to eq(nil)
+        expect(dummy_class.monthly_installment).to eq(313.08.to_d)
+      end
     end
   end
 end
