@@ -17,8 +17,9 @@ class Api::V1::LoansController < ApplicationController
   # POST /loans
   def create
     @loan = Loan.new(loan_params)
-
+    @loan.status = 'processing'
     if @loan.save
+      CreditEngineJob.perform_later(@loan)
       render json: { id: @loan.id }, status: :created, location: api_v1_loans_url
     else
       render json: { errors: @loan.errors.messages }, status: :unprocessable_entity
