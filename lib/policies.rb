@@ -7,6 +7,7 @@ module Policies
   def run_policies
     @@policies_list.map do |policy|
       method(policy).call
+      break if refused_policy
     end
 
     self.status = 'completed'
