@@ -17,7 +17,7 @@ Rails api to check your credit score and potentially give you money!
 cp config/local_env_example.yml config/local_env.yml
 ```
 
-than adjust the keys as needed.
+Then adjust the keys as needed.
 
 ### Installing
 
