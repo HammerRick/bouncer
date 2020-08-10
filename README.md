@@ -1,6 +1,6 @@
 # Bouncer
 
-This is the best[citation needed] rails API to give you money!
+Rails api to check your credit score and potentially give you money!
 
 ## Getting Started
 
