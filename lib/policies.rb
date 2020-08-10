@@ -1,12 +1,23 @@
 module Policies
   include HTTParty
 
+  # add a new policy method name here to it runs on every polices check
+  @@policies_list = %i[age_policy score_policy commitment_policy]
+
+  def run_policies
+    @@policies_list.map do |policy|
+      method(policy).call
+    end
+
+    self.status = 'completed'
+    self.result = refused_policy.nil? ? 'approved' : 'refused'
+  end
+
   def age_policy
     self.refused_policy = 'age' if age < 18
   end
 
   def score_policy
-    # interest rate = commitment
     self.refused_policy = 'score' if score < 600
   end
 
@@ -30,6 +41,8 @@ module Policies
     birthday_has_passed = today.month > birthdate.month || (today.month == birthdate.month && today.day >= birthdate.day)
     today.year - birthdate.year - (birthday_has_passed ? 0 : 1)
   end
+
+  private
 
   def score
     response = HTTParty.post(
